@@ -11,6 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ro.schooldata.SimpleSchool.Classes.*;
+import ro.schooldata.SimpleSchool.Payload.ManagementPackage.GradeRecord;
 import ro.schooldata.SimpleSchool.Payload.Request.LoginRequest;
 import ro.schooldata.SimpleSchool.Payload.Request.SignupRequest;
 import ro.schooldata.SimpleSchool.Payload.Response.JwtResponse;
@@ -192,6 +193,30 @@ public class ProfesorService implements IProfesorService {
         profesorRepository.delete(profesor);
         return ResponseEntity
                 .ok(new MessageResponse("Delete operation done!"));
+    }
+
+    @Override
+    @Transactional
+    public ResponseEntity<?> putGrade(Long idS, Long idT, GradeRecord gradeRecord) {
+        Profesor profesor = profesorRepository.findById(idT)
+                .orElse(null);
+        Elev elev = elevRepository.findById(idS)
+                .orElse(null);
+        if (profesor == null || elev == null) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(new MessageResponse("Student or teacher not found by the id provided"));
+        }
+        if (elev.getProfesori().stream().filter(a -> a.getId() == idT).findFirst().orElse(null) == null) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(new MessageResponse("Student do not have this teacher!"));
+        }
+        Materie mat = elev.getMaterii().stream().filter(a -> a.getName().equals(profesor.getMaterie())).findFirst().orElse(null);
+        mat.getNote().add(gradeRecord.getGrade());
+        elevRepository.save(elev);
+        return ResponseEntity
+                .ok(new MessageResponse("Grade assigned successfully!"));
     }
 
     @Override

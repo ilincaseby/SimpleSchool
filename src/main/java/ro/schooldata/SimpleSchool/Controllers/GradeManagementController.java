@@ -6,14 +6,17 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-import ro.schooldata.SimpleSchool.Classes.ConnTeacherStudent;
-import ro.schooldata.SimpleSchool.Classes.User;
+import ro.schooldata.SimpleSchool.Classes.Materie;
+import ro.schooldata.SimpleSchool.Payload.ManagementPackage.ConnTeacherStudent;
+import ro.schooldata.SimpleSchool.Payload.ManagementPackage.GradeRecord;
 import ro.schooldata.SimpleSchool.Security.jwt.JwtUtils;
 import ro.schooldata.SimpleSchool.Security.services.UserDetailsImpl;
 import ro.schooldata.SimpleSchool.Services.IElevService;
 import ro.schooldata.SimpleSchool.Services.IProfesorService;
 
 import javax.validation.Valid;
+import java.util.List;
+import java.util.Set;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -60,5 +63,19 @@ public class GradeManagementController {
     public ResponseEntity<?> deleteConn(@PathVariable Long id) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return profesorService.deleteConnection(userDetails.getId(), id);
+    }
+    @PutMapping("/teacher/assignGrade/{id}")
+    @PreAuthorize("hasRole('ROLE_TEACHER')")
+    public ResponseEntity<?> assignGradeS(@PathVariable Long id ,@Valid @RequestBody GradeRecord gradeRecord) {
+        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return profesorService.putGrade(id, userDetails.getId(), gradeRecord);
+    }
+
+    @GetMapping("/student/checkGrades")
+    @PreAuthorize("hasRole('ROLE_ELEV')")
+    public Set<Materie> getAllGrades() {
+        return elevService.getGrades(((UserDetailsImpl) SecurityContextHolder
+                .getContext().getAuthentication()
+                .getPrincipal()).getId());
     }
 }

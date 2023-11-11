@@ -4,6 +4,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import ro.schooldata.SimpleSchool.Classes.Profesor;
+import ro.schooldata.SimpleSchool.Payload.ManagementPackage.GradeRecord;
 import ro.schooldata.SimpleSchool.Payload.Request.LoginRequest;
 import ro.schooldata.SimpleSchool.Payload.Request.SignupRequest;
 import ro.schooldata.SimpleSchool.Security.jwt.JwtUtils;
@@ -22,6 +23,7 @@ public interface IProfesorService {
     public ResponseEntity<?> connectAStudent(Long idT, Long idS);
     public ResponseEntity<?> deleteConnection(Long idT, Long idS);
     public ResponseEntity<?> deleteTeacher(Long id);
+    public ResponseEntity<?> putGrade(Long idS, Long idT, GradeRecord gradeRecord);
     public List<Profesor> returnAll(); //done
 
     public void deleteStudent(Long id);

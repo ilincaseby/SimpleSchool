@@ -9,15 +9,12 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ro.schooldata.SimpleSchool.Classes.ERole;
-import ro.schooldata.SimpleSchool.Classes.Elev;
-import ro.schooldata.SimpleSchool.Classes.Role;
+import ro.schooldata.SimpleSchool.Classes.*;
 import ro.schooldata.SimpleSchool.Payload.Request.LoginRequest;
 import ro.schooldata.SimpleSchool.Payload.Request.SignupRequest;
 import ro.schooldata.SimpleSchool.Payload.Response.JwtResponse;
 import ro.schooldata.SimpleSchool.Payload.Response.MessageResponse;
 import ro.schooldata.SimpleSchool.Repositories.ElevRepository;
-import ro.schooldata.SimpleSchool.Classes.LoggedInAccount;
 import ro.schooldata.SimpleSchool.Repositories.ProfesorRepository;
 import ro.schooldata.SimpleSchool.Repositories.RoleRepository;
 import ro.schooldata.SimpleSchool.Security.jwt.JwtUtils;
@@ -83,6 +80,12 @@ public class ElevService implements IElevService {
         elev.setRoles(roles);
         elevRepository.save(elev);
         return ResponseEntity.ok(new MessageResponse("Student account created successfully"));
+    }
+
+    @Override
+    public Set<Materie> getGrades(Long id) {
+        Elev elev = elevRepository.findById(id).orElseThrow(() -> new UsernameNotFoundException("Student with specified id is not found"));
+        return elev.getMaterii();
     }
 
     @Override

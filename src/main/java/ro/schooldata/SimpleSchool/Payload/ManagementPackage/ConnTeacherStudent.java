@@ -1,4 +1,4 @@
-package ro.schooldata.SimpleSchool.Classes;
+package ro.schooldata.SimpleSchool.Payload.ManagementPackage;
 
 import javax.validation.constraints.NotBlank;
 
