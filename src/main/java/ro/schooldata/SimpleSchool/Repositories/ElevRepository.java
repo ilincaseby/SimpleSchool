@@ -12,4 +12,6 @@ public interface ElevRepository extends JpaRepository<Elev, Long> {
     public List<Elev> findAllByCnp(String cnp);
     public Optional<Elev> findByCod(String cod);
     public Optional<Elev> findByTel(String tel);
+    public Optional<Elev> findByUserName(String userName);
+    public boolean existsByUserName(String username);
 }

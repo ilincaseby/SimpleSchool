@@ -21,6 +21,8 @@ public interface IProfesorService {
                                             JwtUtils jwtUtils);
     public List<Profesor> returnAll(); //done
 
+    public void deleteStudent(Long id);
+
     public void createProfesor(Profesor profesor); // done
     public void updateProfesor(Long id, Profesor profesor); // done
     public void deleteProfesor(Long id); // done

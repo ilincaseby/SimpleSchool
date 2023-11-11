@@ -67,6 +67,8 @@ public class WebSecurityConfig { // extends WebSecurityCOnfigurerAdapyer {
                                 .requestMatchers("api/v1/elev/auth/**").permitAll()
                                 .requestMatchers("/api/v1/auth/profesor/signup/**").permitAll()
                                 .requestMatchers("/api/v1/auth/profesor/signin").permitAll()
+                                .requestMatchers("/api/v1/auth/elev/sigin").permitAll()
+                                .requestMatchers("/api/v1/auth/elev/signup").permitAll()
                                 .anyRequest().authenticated()
                 );
 

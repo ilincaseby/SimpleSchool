@@ -3,12 +3,14 @@ package ro.schooldata.SimpleSchool.Classes;
 import jakarta.persistence.*;
 
 import javax.validation.constraints.Email;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 @Entity
 @Table(name = "elevi")
-public class Elev {
+public class Elev implements User{
     @Id
         @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "id", nullable = false)
@@ -18,6 +20,35 @@ public class Elev {
 
     @Column(name = "prenume_elev")
     private String firstName;
+
+    @Column(name = "userName")
+    private String userName;
+
+    @Column(name = "password")
+    private String password;
+
+    @Override
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    @Override
+    public String getUserName() {
+        return userName;
+    }
+
+    @Override
+    public String getEmail() {
+        return this.getEmail_p();
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
 
     public String getLastName() {
         return lastName;
@@ -60,11 +91,25 @@ public class Elev {
     private String clasa;
 
     @OneToMany(mappedBy = "elev", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Materie> materii;
+    private Set<Materie> materii = new HashSet<>();
 
     @ManyToMany
     @JoinTable(name = "profesor-elev", joinColumns = @JoinColumn(name = "elev_fk"), inverseJoinColumns = @JoinColumn(name = "profesor_fk"))
-    private List<Profesor> profesori;
+    private List<Profesor> profesori = new ArrayList<>();
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "elev_roles",
+            joinColumns = @JoinColumn(name = "elev_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id"))
+    private Set<Role> roles = new HashSet<>();
+
+    public Set<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
+    }
 
     public List<Profesor> getProfesori() {
         return profesori;
@@ -134,7 +179,11 @@ public class Elev {
     public Elev() {
     }
 
-    public Elev(String lastName, String firstName, String tel, String email_p, String cnp, String cod) {
+    public Elev(String lastName, String firstName, String tel,
+                String email_p, String cnp, String cod, String userName,
+                String password) {
+        this.userName = userName;
+        this.password = password;
         this.lastName = lastName;
         this.firstName = firstName;
         this.tel = tel;

@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import ro.schooldata.SimpleSchool.Classes.Elev;
 
 import javax.validation.constraints.Email;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -13,7 +14,7 @@ import java.util.Set;
         @UniqueConstraint(columnNames = "userName"),
         @UniqueConstraint(columnNames = "email")
 })
-public class Profesor {
+public class Profesor implements User{
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "id", nullable = false)
@@ -93,7 +94,7 @@ public class Profesor {
     }
 
     @ManyToMany(mappedBy = "profesori")
-    private List<Elev> elevi;
+    private List<Elev> elevi = new ArrayList<>();
 
     public Long getId() {
         return id;

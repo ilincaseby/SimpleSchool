@@ -16,6 +16,34 @@ public class SignupRequest {
     private String firstName;
     private String lastName;
     private String materie;
+    private String tel;
+
+    private String cnp;
+    private String cod;
+
+    public String getCod() {
+        return cod;
+    }
+
+    public void setCod(String cod) {
+        this.cod = cod;
+    }
+
+    public String getCnp() {
+        return cnp;
+    }
+
+    public void setCnp(String cnp) {
+        this.cnp = cnp;
+    }
+
+    public String getTel() {
+        return tel;
+    }
+
+    public void setTel(String tel) {
+        this.tel = tel;
+    }
 
     public String getFirstName() {
         return firstName;

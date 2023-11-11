@@ -9,6 +9,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ro.schooldata.SimpleSchool.Classes.ERole;
 import ro.schooldata.SimpleSchool.Classes.Profesor;
 import ro.schooldata.SimpleSchool.Classes.Role;
@@ -51,8 +52,8 @@ public class ProfesorService implements IProfesorService {
 
     @Override
     public ResponseEntity<?> authProfesor(LoginRequest loginRequest, AuthenticationManager authenticationManager, PasswordEncoder encoder, JwtUtils jwtUtils) {
-        Profesor profesor = profesorRepository.findByUserName(loginRequest.getUsername()).
-                orElseThrow(() -> new UsernameNotFoundException("Profesor not found by username!"));
+        Profesor profesor = profesorRepository.findByUserName(loginRequest.getUsername())
+                        .orElseThrow(() -> new UsernameNotFoundException("Profesor not found by username!"));
         Authentication authentication = authenticationManager.
                 authenticate(new UsernamePasswordAuthenticationToken(loginRequest.
                         getUsername(), loginRequest.getPassword()));
@@ -70,6 +71,7 @@ public class ProfesorService implements IProfesorService {
     }
 
     @Override
+    @Transactional
     public ResponseEntity<?> signupProfesor(SignupRequest signupRequest, AuthenticationManager authenticationManager, PasswordEncoder encoder, JwtUtils jwtUtils) {
         roleService.verifyAndAdapt();
 
@@ -121,6 +123,18 @@ public class ProfesorService implements IProfesorService {
     @Override
     public List<Profesor> returnAll() {
         return null;
+    }
+
+    @Override
+    public void deleteStudent(Long id) {
+        List<Profesor> profesors = profesorRepository.findAll();
+        profesors.forEach(profesor -> {
+            int size = profesor.getElevi().size();
+            profesor.getElevi().removeIf(elev -> elev.getId().equals(id));
+            if (size > profesor.getElevi().size()) {
+                profesorRepository.save(profesor);
+            }
+        });
     }
 
     @Override
