@@ -19,6 +19,9 @@ public interface IProfesorService {
                                             AuthenticationManager authenticationManager,
                                             PasswordEncoder encode,
                                             JwtUtils jwtUtils);
+    public ResponseEntity<?> connectAStudent(Long idT, Long idS);
+    public ResponseEntity<?> deleteConnection(Long idT, Long idS);
+    public ResponseEntity<?> deleteTeacher(Long id);
     public List<Profesor> returnAll(); //done
 
     public void deleteStudent(Long id);

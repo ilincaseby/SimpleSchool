@@ -10,9 +10,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ro.schooldata.SimpleSchool.Classes.ERole;
-import ro.schooldata.SimpleSchool.Classes.Profesor;
-import ro.schooldata.SimpleSchool.Classes.Role;
+import ro.schooldata.SimpleSchool.Classes.*;
 import ro.schooldata.SimpleSchool.Payload.Request.LoginRequest;
 import ro.schooldata.SimpleSchool.Payload.Request.SignupRequest;
 import ro.schooldata.SimpleSchool.Payload.Response.JwtResponse;
@@ -24,6 +22,7 @@ import ro.schooldata.SimpleSchool.Repositories.RoleRepository;
 import ro.schooldata.SimpleSchool.Security.jwt.JwtUtils;
 import ro.schooldata.SimpleSchool.Security.services.UserDetailsImpl;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -118,6 +117,81 @@ public class ProfesorService implements IProfesorService {
         profesor.setRoles(roles);
         profesorRepository.save(profesor);
         return ResponseEntity.ok(new MessageResponse("Account successfully created!"));
+    }
+
+    @Override
+    @Transactional
+    public ResponseEntity<?> connectAStudent(Long idT, Long idS) {
+        Profesor profesor = profesorRepository.findById(idT)
+                .orElse(null);
+        Elev elev = elevRepository.findById(idS)
+                .orElse(null);
+        if (profesor == null || elev == null) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(new MessageResponse("Student or teacher not found by the id provided"));
+        }
+        if (elev.getProfesori().stream().filter(a -> a.getMaterie().equals(profesor.getMaterie())).findFirst().orElse(null) != null) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(new MessageResponse("Student already has a teacher on this subject"));
+        }
+        if (elev.getMaterii().stream().filter(a -> a.getName().equals(profesor.getMaterie())).findFirst().orElse(null) == null) {
+            elev.getMaterii().add(new Materie(profesor.getMaterie(), new ArrayList<>(), elev));
+        }
+        elev.getProfesori().add(profesor);
+        profesor.getElevi().add(elev);
+        profesorRepository.save(profesor);
+        elevRepository.save(elev);
+        return ResponseEntity
+                .ok(new MessageResponse("Operation completed!"));
+    }
+
+    @Override
+    @Transactional
+    public ResponseEntity<?> deleteConnection(Long idT, Long idS) {
+        Profesor profesor = profesorRepository.findById(idT)
+                .orElse(null);
+        Elev elev = elevRepository.findById(idS)
+                .orElse(null);
+        if (profesor == null || elev == null) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(new MessageResponse("Student or teacher not found by the id provided"));
+        }
+        if (elev.getProfesori().stream().filter(a -> a.getMaterie().equals(profesor.getMaterie())).findFirst().orElse(null) == null) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(new MessageResponse("Student has no teacher on this subject"));
+        }
+        elev.getProfesori().removeIf(a -> a.getId() == idT);
+        profesor.getElevi().removeIf(a -> a.getId() == idS);
+        elevRepository.save(elev);
+        profesorRepository.save(profesor);
+        return ResponseEntity
+                .ok(new MessageResponse("Connection deleted successfully"));
+    }
+
+
+    @Override
+    @Transactional
+    public ResponseEntity<?> deleteTeacher(Long id) {
+        Profesor profesor = profesorRepository.findById(id).orElse(null);
+        if (profesor == null) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(new MessageResponse("Teacher not found with this id"));
+        }
+        List<Elev> list = elevRepository.findAll();
+        for (Elev elev : list) {
+            if (elev.getProfesori().stream().filter(a -> a.getId() == id).findFirst().orElse(null) != null) {
+                elev.getProfesori().removeIf(a -> a.getId() == id);
+                elevRepository.save(elev);
+            }
+        }
+        profesorRepository.delete(profesor);
+        return ResponseEntity
+                .ok(new MessageResponse("Delete operation done!"));
     }
 
     @Override

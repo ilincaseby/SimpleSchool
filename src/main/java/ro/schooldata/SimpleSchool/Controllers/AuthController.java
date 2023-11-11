@@ -4,6 +4,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import ro.schooldata.SimpleSchool.Payload.Request.LoginRequest;
@@ -64,6 +65,21 @@ public class AuthController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<?> deleteStudent(@PathVariable Long id) {
         return elevService.deleteElev(id);
+    }
+
+    @PostMapping("/admin/addTeacher")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<?> addTeacher(@Valid @RequestBody SignupRequest signupRequest) {
+        return profesorService.signupProfesor(signupRequest, authenticationManager, encoder, jwtUtils);
+    }
+
+    @PostMapping("/high/deleteMYSLF")
+    @PreAuthorize("hasRole('ROLE_ADMIN') OR hasRole('ROLE_TEACHER')")
+    public ResponseEntity<?> deleteSelfHigh() {
+        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder
+                .getContext().getAuthentication()
+                .getPrincipal();
+        return profesorService.deleteTeacher(userDetails.getId());
     }
 //    @GetMapping("/elev/wow")
 //    @PreAuthorize("hasRole('ROLE_ELEV')")
