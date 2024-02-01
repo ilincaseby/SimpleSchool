@@ -1,15 +1,16 @@
 package ro.schooldata.SimpleSchool.Classes;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.validation.constraints.Email;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Table(name = "elevi")
+@Getter
+@Setter
 public class Elev implements User{
     @Id
         @GeneratedValue(strategy = GenerationType.SEQUENCE)
@@ -27,14 +28,9 @@ public class Elev implements User{
     @Column(name = "password")
     private String password;
 
-    @Override
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
+    @Column(name = "email_parinte")
+    @Email(message = "Invalid email address")
+    private String email_p;
 
     @Override
     public String getUserName() {
@@ -46,40 +42,10 @@ public class Elev implements User{
         return this.getEmail_p();
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
     @Column(name = "numar_de_telefon")
     private String tel;
 
-    @Column(name = "email_parinte")
-    @Email(message = "Invalid email address")
-    private String email_p;
+
 
     @Column(name = "CNP")
     private String cnp;
@@ -90,7 +56,8 @@ public class Elev implements User{
     @Column(name = "clasa")
     private String clasa;
 
-    @OneToMany(mappedBy = "elev", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @ManyToMany
+    @JoinTable(name = "materie-elev", joinColumns = @JoinColumn(name = "elev_fk"), inverseJoinColumns = @JoinColumn(name = "materie_fk"))
     private Set<Materie> materii = new HashSet<>();
 
     @ManyToMany
@@ -103,61 +70,12 @@ public class Elev implements User{
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
 
-    public Set<Role> getRoles() {
-        return roles;
-    }
+    @OneToMany(mappedBy = "elevi", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ElevMaterieT> elevMaterieTList;
 
-    public void setRoles(Set<Role> roles) {
-        this.roles = roles;
-    }
 
-    public List<Profesor> getProfesori() {
-        return profesori;
-    }
 
-    public void setProfesori(List<Profesor> profesori) {
-        this.profesori = profesori;
-    }
 
-    public String getCnp() {
-        return cnp;
-    }
-
-    public void setCnp(String cnp) {
-        this.cnp = cnp;
-    }
-
-    public String getClasa() {
-        return clasa;
-    }
-
-    public void setClasa(String clasa) {
-        this.clasa = clasa;
-    }
-
-    public Set<Materie> getMaterii() {
-        return materii;
-    }
-
-    public void setMaterii(Set<Materie> materii) {
-        this.materii = materii;
-    }
-
-    public String getTel() {
-        return tel;
-    }
-
-    public void setTel(String tel) {
-        this.tel = tel;
-    }
-
-    public String getEmail_p() {
-        return email_p;
-    }
-
-    public void setEmail_p(String email_p) {
-        this.email_p = email_p;
-    }
 
     public String getCNP() {
         return cnp;
@@ -165,14 +83,6 @@ public class Elev implements User{
 
     public void setCNP(String cnp) {
         this.cnp = cnp;
-    }
-
-    public String getCod() {
-        return cod;
-    }
-
-    public void setCod(String cod) {
-        this.cod = cod;
     }
 
 

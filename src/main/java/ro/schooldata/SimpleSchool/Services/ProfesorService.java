@@ -138,7 +138,7 @@ public class ProfesorService implements IProfesorService {
                     .body(new MessageResponse("Student already has a teacher on this subject"));
         }
         if (elev.getMaterii().stream().filter(a -> a.getName().equals(profesor.getMaterie())).findFirst().orElse(null) == null) {
-            elev.getMaterii().add(new Materie(profesor.getMaterie(), new ArrayList<>(), elev));
+            elev.getMaterii().add(materieRepository.findByName(profesor.getMaterie()));
         }
         elev.getProfesori().add(profesor);
         profesor.getElevi().add(elev);
@@ -212,8 +212,7 @@ public class ProfesorService implements IProfesorService {
                     .badRequest()
                     .body(new MessageResponse("Student do not have this teacher!"));
         }
-        Materie mat = elev.getMaterii().stream().filter(a -> a.getName().equals(profesor.getMaterie())).findFirst().orElse(null);
-        mat.getNote().add(gradeRecord.getGrade());
+        // TODO Pune nota studentului
         elevRepository.save(elev);
         return ResponseEntity
                 .ok(new MessageResponse("Grade assigned successfully!"));
@@ -221,7 +220,7 @@ public class ProfesorService implements IProfesorService {
 
     @Override
     public List<Profesor> returnAll() {
-        return null;
+        return profesorRepository.findAll();
     }
 
     @Override

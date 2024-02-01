@@ -7,5 +7,5 @@ import ro.schooldata.SimpleSchool.Classes.Materie;
 @Repository
 public interface MaterieRepository extends JpaRepository<Materie, Long>{
     public void deleteById(Long id);
-
+    public Materie findByName(String name);
 }
