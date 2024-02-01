@@ -81,20 +81,4 @@ public class AuthController {
                 .getPrincipal();
         return profesorService.deleteTeacher(userDetails.getId());
     }
-//    @GetMapping("/elev/wow")
-//    @PreAuthorize("hasRole('ROLE_ELEV')")
-//    public String elevTest() {
-//        UserDetailsImpl user = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-//        return user.getUsername();
-//    }
-//    @GetMapping("/profesor/wow")
-//    @PreAuthorize("hasRole('ROLE_TEACHER')")
-//    public String getTest() {
-//        return "Ai reusit bro!!!";
-//    }
-//    @GetMapping("/admin/wow")
-//    @PreAuthorize("hasRole('ROLE_ADMIN')")
-//    public String testAdmin() {
-//        return "Esti admin de azi!";
-//    }
 }
