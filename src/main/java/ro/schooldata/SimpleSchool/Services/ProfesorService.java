@@ -16,10 +16,7 @@ import ro.schooldata.SimpleSchool.Payload.Request.LoginRequest;
 import ro.schooldata.SimpleSchool.Payload.Request.SignupRequest;
 import ro.schooldata.SimpleSchool.Payload.Response.JwtResponse;
 import ro.schooldata.SimpleSchool.Payload.Response.MessageResponse;
-import ro.schooldata.SimpleSchool.Repositories.ElevRepository;
-import ro.schooldata.SimpleSchool.Repositories.MaterieRepository;
-import ro.schooldata.SimpleSchool.Repositories.ProfesorRepository;
-import ro.schooldata.SimpleSchool.Repositories.RoleRepository;
+import ro.schooldata.SimpleSchool.Repositories.*;
 import ro.schooldata.SimpleSchool.Security.jwt.JwtUtils;
 import ro.schooldata.SimpleSchool.Security.services.UserDetailsImpl;
 
@@ -39,14 +36,17 @@ public class ProfesorService implements IProfesorService {
     private RoleService roleService;
 
     private final ElevRepository elevRepository;
+
+    private IElevMaterieTService elevMaterieTService;
     public ProfesorService(RoleService roleService, ProfesorRepository profesorRepository,
                            MaterieRepository materieRepository, ElevRepository elevRepository,
-                            RoleRepository roleRepository) {
+                            RoleRepository roleRepository, IElevMaterieTService elevMaterieTService) {
         this.roleRepository = roleRepository;
         this.roleService = roleService;
         this.profesorRepository = profesorRepository;
         this.materieRepository = materieRepository;
         this.elevRepository = elevRepository;
+        this.elevMaterieTService = elevMaterieTService;
     }
 
 
@@ -212,7 +212,8 @@ public class ProfesorService implements IProfesorService {
                     .badRequest()
                     .body(new MessageResponse("Student do not have this teacher!"));
         }
-        // TODO Pune nota studentului
+        Materie materie = materieRepository.findByName(profesor.getMaterie());
+        elevMaterieTService.assignGrade(gradeRecord.getGrade(), elev, materie);
         elevRepository.save(elev);
         return ResponseEntity
                 .ok(new MessageResponse("Grade assigned successfully!"));

@@ -24,6 +24,6 @@ public class Materie {
     @ManyToMany(mappedBy = "materii")
     private List<Elev> elevi;
 
-    @OneToMany(mappedBy = "materii", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "materie", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ElevMaterieT> elevMaterieTList;
 }

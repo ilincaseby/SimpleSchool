@@ -70,12 +70,8 @@ public class Elev implements User{
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
 
-    @OneToMany(mappedBy = "elevi", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "elev", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ElevMaterieT> elevMaterieTList;
-
-
-
-
 
     public String getCNP() {
         return cnp;
