@@ -1,5 +1,6 @@
 package ro.schooldata.SimpleSchool.Classes;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import ro.schooldata.SimpleSchool.Classes.Elev;
 
@@ -94,6 +95,7 @@ public class Profesor implements User{
     }
 
     @ManyToMany(mappedBy = "profesori")
+    @JsonIgnore
     private List<Elev> elevi = new ArrayList<>();
 
     public Long getId() {

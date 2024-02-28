@@ -1,5 +1,6 @@
 package ro.schooldata.SimpleSchool.Classes;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -24,6 +25,7 @@ public class ElevMaterieT {
 
     @ManyToOne
     @JoinColumn(name = "elev_id")
+    @JsonIgnore
     Elev elev;
 
     @ManyToOne
@@ -38,4 +40,10 @@ public class ElevMaterieT {
     @OrderColumn(name = "element_order")
     @Column(name = "note")
     private List<Integer> note = new ArrayList<>();
+
+    public ElevMaterieT(Elev elev, Materie materie, List<Integer> note) {
+        this.elev = elev;
+        this.materie = materie;
+        this.note = note;
+    }
 }

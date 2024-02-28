@@ -9,12 +9,14 @@ import org.springframework.web.bind.annotation.*;
 import ro.schooldata.SimpleSchool.Classes.Materie;
 import ro.schooldata.SimpleSchool.Payload.ManagementPackage.ConnTeacherStudent;
 import ro.schooldata.SimpleSchool.Payload.ManagementPackage.GradeRecord;
+import ro.schooldata.SimpleSchool.Repositories.MaterieRepository;
 import ro.schooldata.SimpleSchool.Security.jwt.JwtUtils;
 import ro.schooldata.SimpleSchool.Security.services.UserDetailsImpl;
 import ro.schooldata.SimpleSchool.Services.IElevService;
 import ro.schooldata.SimpleSchool.Services.IProfesorService;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -29,23 +31,33 @@ public class GradeManagementController {
     IProfesorService profesorService;
 
     IElevService elevService;
+    MaterieRepository materieRepository;
     public GradeManagementController(AuthenticationManager authenticationManager,
                           PasswordEncoder encoder, JwtUtils jwtUtils,
                           IProfesorService profesorService,
-                          IElevService elevService){
+                          IElevService elevService, MaterieRepository materieRepository){
         this.elevService = elevService;
         this.encoder = encoder;
         this.authenticationManager = authenticationManager;
         this.jwtUtils = jwtUtils;
         this.profesorService = profesorService;
+        this.materieRepository = materieRepository;
     }
 
+    // Checked
     @PutMapping("/admin/establishConnection")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<?> establishConnTS(@Valid @RequestBody ConnTeacherStudent connTeacherStudent) {
         return profesorService.connectAStudent(connTeacherStudent.getIdT(), connTeacherStudent.getIdS());
     }
 
+    @PostMapping("/admin/addSubject")
+    @PreAuthorize("hasRole(ROLE_ADMIN)")
+    public ResponseEntity<?> addSubject(@RequestBody String subject) {
+        Materie materie = new Materie(new ArrayList<>(), new ArrayList<>());
+        materieRepository.save(materie);
+        return ResponseEntity.ok("Subject saved!");
+    }
     @PutMapping("/admin/deleteConnection")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<?> deleteConnTS(@Valid @RequestBody ConnTeacherStudent connTeacherStudent) {

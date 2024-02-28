@@ -6,4 +6,5 @@ import ro.schooldata.SimpleSchool.Classes.Materie;
 
 public interface IElevMaterieTService {
     public void assignGrade(int grade, Elev elev, Materie materie);
+    public void saveInDB(ElevMaterieT elevMaterieT);
 }

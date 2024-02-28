@@ -1,5 +1,6 @@
 package ro.schooldata.SimpleSchool.Classes;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -62,6 +63,7 @@ public class Elev implements User{
 
     @ManyToMany
     @JoinTable(name = "profesor-elev", joinColumns = @JoinColumn(name = "elev_fk"), inverseJoinColumns = @JoinColumn(name = "profesor_fk"))
+    @JsonIgnore
     private List<Profesor> profesori = new ArrayList<>();
 
     @ManyToMany(fetch = FetchType.LAZY)

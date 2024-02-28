@@ -138,7 +138,11 @@ public class ProfesorService implements IProfesorService {
                     .body(new MessageResponse("Student already has a teacher on this subject"));
         }
         if (elev.getMaterii().stream().filter(a -> a.getName().equals(profesor.getMaterie())).findFirst().orElse(null) == null) {
-            elev.getMaterii().add(materieRepository.findByName(profesor.getMaterie()));
+            Materie materie = materieRepository.findByName(profesor.getMaterie());
+            ElevMaterieT elevMaterieT = new ElevMaterieT(elev, materie, new ArrayList<>());
+            elev.getMaterii().add(materie);
+            elev.getElevMaterieTList().add(elevMaterieT);
+            elevMaterieTService.saveInDB(elevMaterieT);
         }
         elev.getProfesori().add(profesor);
         profesor.getElevi().add(elev);

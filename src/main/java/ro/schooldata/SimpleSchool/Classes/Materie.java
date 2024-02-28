@@ -1,5 +1,6 @@
 package ro.schooldata.SimpleSchool.Classes;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -22,8 +23,15 @@ public class Materie {
     private String name;
 
     @ManyToMany(mappedBy = "materii")
+    @JsonIgnore
     private List<Elev> elevi;
 
     @OneToMany(mappedBy = "materie", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<ElevMaterieT> elevMaterieTList;
+
+    public Materie(List<Elev> elevi, List<ElevMaterieT> elevMaterieTList) {
+        this.elevi = elevi;
+        this.elevMaterieTList = elevMaterieTList;
+    }
 }

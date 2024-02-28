@@ -10,11 +10,12 @@ import ro.schooldata.SimpleSchool.Repositories.ElevMaterieTRepository;
 
 import java.util.Optional;
 
-@NoArgsConstructor
-@AllArgsConstructor
 @Service
 public class ElevMaterieTService implements  IElevMaterieTService{
     private ElevMaterieTRepository elevMaterieTRepository;
+    public ElevMaterieTService(ElevMaterieTRepository elevMaterieTRepository) {
+        this.elevMaterieTRepository = elevMaterieTRepository;
+    }
     @Override
     public void assignGrade(int grade, Elev elev, Materie materie) {
         Optional<ElevMaterieT> elevMaterieT = elevMaterieTRepository.findByElevAndMaterie(elev, materie);
@@ -24,5 +25,10 @@ public class ElevMaterieTService implements  IElevMaterieTService{
         } else {
             throw new RuntimeException("Does not exist in database a table to assign this grade!");
         }
+    }
+
+    @Override
+    public void saveInDB(ElevMaterieT elevMaterieT) {
+        elevMaterieTRepository.save(elevMaterieT);
     }
 }
